@@ -1,28 +1,83 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <img class="img-logo" alt="Vue logo" src="./assets/logo.png">
+    <h1>Task Manager</h1>
+    <input type="text" placeholder="New Task" v-model="newTask">
+    <div class="new-task">
+      <button @click="addTask"><img class="img-add" alt="Add task" src="./assets/add.png"></button>
+      <p>{{ newTask }}</p>
+    </div>
+    <div class="task-list">
+      <ul>
+        <li
+          v-for="task in tasks"
+          :key=task.description>
+          {{ task.description }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+//import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    //HelloWorld
+  },
+  data() {
+    return {
+      newTask: null,
+      tasks: [
+        {
+          description: null
+        }
+      ],
+    }
+  },
+  methods: {
+    addTask: function () {
+        this.tasks.push({
+          description: this.newTask
+        })
+    }
   }
 }
 </script>
 
-<style>
+<style scoped>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Roboto', sans-serif;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+}
+.img-logo {
+  height: 100px;
+  width: 100px;
+}
+input {
+  margin: 30px auto;
+  height: 30px;
+  width: 200px;
+}
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+.new-task {
+  margin: 15px auto;
+}
+.img-add {
+  display: inline;
+  margin: 15px auto;
+  vertical-align: middle;
+  height: 50px;
+  width: 50px;
+}
+p {
+  display: inline;
+  margin: 15px auto auto 30px;
 }
 </style>
