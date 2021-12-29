@@ -1,9 +1,11 @@
 <template>
   <div id="app">
-    <img class="img-logo" alt="Vue logo" src="./assets/logo.png">
-    <h1>Task Manager</h1>
+    <div class="title">
+      <img class="img-logo" alt="Vue logo" src="./assets/logo.png">
+      <h1>Task Manager</h1>
+    </div>
     <div class="new-task">
-      <button @click="addTask"><img class="icon" alt="Add task" src="./assets/add.png"></button>
+      <button @click="addTask"><img class="icon-add" alt="Add task" src="./assets/add.png"></button>
       <input type="text" placeholder="New Task" v-model="newTask" v-on:keyup.enter="addTask">
     </div>
     <div v-show="emptyTaskList">
@@ -17,11 +19,13 @@
             v-for="(task, index) in tasks"
             :key=index
           >
-          <td class="description" v-if="task.description != ''">{{ task.description }}</td>
-          <td class="status" v-if="task.description != ''">To do</td>
-          <td v-if="task.description != ''"><button><img class="icon" alt="Edit Task" src="./assets/pencil.png"></button></td>
-          <td v-if="task.description != ''" @click="deleteTask(index)"><button><img class="icon" alt="Delete Task" src="./assets/trash.png"></button></td>
-          <td v-if="task.description != ''"><button><img class="icon" alt="Conclude" src="./assets/checked.png"></button></td>
+          <td :class="isFinished(index)" v-if="task.description != ''">{{ task.description }}</td>
+          <td class="status" v-if="task.description != ''">{{ task.status }}</td>
+          
+          <td v-if="task.description != ''"><button @click="startTask(index)"><img class="icon" alt="Start Task" src="./assets/start.png"></button></td>
+          <td v-if="task.description != ''"><button @click="finishTask(index)"><img class="icon" alt="Conclude" src="./assets/checked.png"></button></td>
+          <td v-if="task.description != ''"><button @click="editTask(index)"><img class="icon" alt="Edit Task" src="./assets/pencil.png"></button></td>
+          <td v-if="task.description != ''"><button @click="deleteTask(index)"><img class="icon" alt="Delete Task" src="./assets/trash.png"></button></td>
           </tr>
         </tbody>
       </table>
@@ -45,25 +49,49 @@ export default {
         {
           description: ""
         }
-      ]
+      ],
+      editedTask: null,
+      finishedTask: false
     }
   },
   methods: {
     addTask: function () {
-      if(this.newTask !== null)
+      if(this.newTask !== null){  
         this.emptyTaskList = true
         this.tasks.push({
-            description: this.newTask
+            description: this.newTask,
+            status: 'To do'
         })
-      this.newTask = ''
+        this.newTask = ''
+      } else {
+        this.tasks[this.index].description = this.newTask
+        this.editedtask = null
+      }
     },
     deleteTask: function (index) {
       this.tasks.splice(index, 1)
-      if(this.tasks.length === 0){
-        this.emptyTaskList = false
+      if(this.tasks.length === 2){
+        this.emptyTaskList = true
+      }
+    },
+    editTask: function (index) {
+      this.newTask = this.tasks[index].description
+      this.editedtask = index
+    },
+    startTask: function(index) {
+      this.tasks[index].status = 'In progress'
+    },
+    finishTask: function(index) {
+      this.tasks[index].status = 'Finished'
+    },
+    isFinished (index) {
+      if(this.tasks[index].status === 'To do' || this.tasks[index].status === 'In progress') {
+        return 'description-active'
+      } else {
+        return 'description-finished'
       }
     }
-  }
+  },
 }
 </script>
 
@@ -72,9 +100,18 @@ export default {
   font-family: 'Roboto', sans-serif;
   text-align: center;
 }
+.title {
+  margin-top: 60px;
+}
 .img-logo {
-  height: 100px;
-  width: 100px;
+  display: inline;
+  margin-right: 25px;
+  vertical-align: middle;
+  height: 80px;
+  width: 80px;
+}
+h1 {
+  display: inline;
 }
 input {
   margin: 30px auto;
@@ -89,6 +126,10 @@ button {
 }
 .new-task {
   margin: 15px auto;
+}
+.icon-add {
+  height: 45px;
+  width: 45px;
 }
 .task-list {
   margin: 5px auto;
@@ -107,8 +148,12 @@ td {
   align-items: center;
   border: 1px solid black;
 }
-td.description {
+td.description-active {
   width: 480px;
+}
+td.description-finished {
+  width: 480px;
+  text-decoration: line-through;
 }
 td.status {
   width: 100px;
