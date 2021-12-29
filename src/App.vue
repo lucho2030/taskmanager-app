@@ -6,7 +6,7 @@
       <button @click="addTask"><img class="icon" alt="Add task" src="./assets/add.png"></button>
       <input type="text" placeholder="New Task" v-model="newTask" v-on:keyup.enter="addTask">
     </div>
-    <div v-show="ok">
+    <div v-show="emptyTaskList">
       <table>
         <thead>
           <th class="description-th">DESCRIPTION</th>
@@ -14,13 +14,13 @@
         </thead>
         <tbody>
           <tr
-            v-for="task in tasks"
-            :key=task.description
+            v-for="(task, index) in tasks"
+            :key=index
           >
           <td class="description" v-if="task.description != ''">{{ task.description }}</td>
           <td class="status" v-if="task.description != ''">To do</td>
           <td v-if="task.description != ''"><button><img class="icon" alt="Edit Task" src="./assets/pencil.png"></button></td>
-          <td v-if="task.description != ''"><button><img class="icon" alt="Delete Task" src="./assets/trash.png"></button></td>
+          <td v-if="task.description != ''" @click="deleteTask(index)"><button><img class="icon" alt="Delete Task" src="./assets/trash.png"></button></td>
           <td v-if="task.description != ''"><button><img class="icon" alt="Conclude" src="./assets/checked.png"></button></td>
           </tr>
         </tbody>
@@ -39,7 +39,7 @@ export default {
   },
   data() {
     return {
-      ok: false,
+      emptyTaskList: false,
       newTask: null,
       tasks: [
         {
@@ -51,10 +51,17 @@ export default {
   methods: {
     addTask: function () {
       if(this.newTask !== null)
-        this.ok = true
+        this.emptyTaskList = true
         this.tasks.push({
             description: this.newTask
         })
+      this.newTask = ''
+    },
+    deleteTask: function (index) {
+      this.tasks.splice(index, 1)
+      if(this.tasks.length === 0){
+        this.emptyTaskList = false
+      }
     }
   }
 }
