@@ -8,7 +8,7 @@
       <button @click="addTask"><img class="icon-add" alt="Add task" src="./assets/add.png"></button>
       <input type="text" placeholder="New Task" v-model="newTask" v-on:keyup.enter="addTask">
     </div>
-    <div v-show="emptyTaskList">
+    <div v-show="!emptyTaskList">
       <table>
         <thead>
           <th class="description-th">DESCRIPTION</th>
@@ -43,7 +43,7 @@ export default {
   },
   data() {
     return {
-      emptyTaskList: false,
+      emptyTaskList: true,
       newTask: null,
       tasks: [
         {
@@ -57,7 +57,7 @@ export default {
   methods: {
     addTask: function () {
       if(this.newTask !== null){  
-        this.emptyTaskList = true
+        this.emptyTaskList = false
         this.tasks.push({
             description: this.newTask,
             status: 'To do'
@@ -70,7 +70,7 @@ export default {
     },
     deleteTask: function (index) {
       this.tasks.splice(index, 1)
-      if(this.tasks.length === 2){
+      if(this.tasks.length === 1){
         this.emptyTaskList = true
       }
     },
