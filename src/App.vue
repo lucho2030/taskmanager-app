@@ -2,19 +2,29 @@
   <div id="app">
     <img class="img-logo" alt="Vue logo" src="./assets/logo.png">
     <h1>Task Manager</h1>
-    <input type="text" placeholder="New Task" v-model="newTask">
     <div class="new-task">
-      <button @click="addTask"><img class="img-add" alt="Add task" src="./assets/add.png"></button>
-      <p>{{ newTask }}</p>
+      <button @click="addTask"><img class="icon" alt="Add task" src="./assets/add.png"></button>
+      <input type="text" placeholder="New Task" v-model="newTask" v-on:keyup.enter="addTask">
     </div>
-    <div class="task-list">
-      <ul>
-        <li
-          v-for="task in tasks"
-          :key=task.description>
-          {{ task.description }}
-        </li>
-      </ul>
+    <div v-show="ok">
+      <table>
+        <thead>
+          <th class="description-th">DESCRIPTION</th>
+          <th class="status">STATUS</th>
+        </thead>
+        <tbody>
+          <tr
+            v-for="task in tasks"
+            :key=task.description
+          >
+          <td class="description" v-if="task.description != ''">{{ task.description }}</td>
+          <td class="status" v-if="task.description != ''">To do</td>
+          <td v-if="task.description != ''"><button><img class="icon" alt="Edit Task" src="./assets/pencil.png"></button></td>
+          <td v-if="task.description != ''"><button><img class="icon" alt="Delete Task" src="./assets/trash.png"></button></td>
+          <td v-if="task.description != ''"><button><img class="icon" alt="Conclude" src="./assets/checked.png"></button></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -29,18 +39,21 @@ export default {
   },
   data() {
     return {
+      ok: false,
       newTask: null,
       tasks: [
         {
-          description: null
+          description: ""
         }
-      ],
+      ]
     }
   },
   methods: {
     addTask: function () {
+      if(this.newTask !== null)
+        this.ok = true
         this.tasks.push({
-          description: this.newTask
+            description: this.newTask
         })
     }
   }
@@ -59,9 +72,10 @@ export default {
 input {
   margin: 30px auto;
   height: 30px;
-  width: 200px;
+  width: 480px;
 }
 button {
+  vertical-align: middle;
   border: none;
   background: none;
   cursor: pointer;
@@ -69,12 +83,32 @@ button {
 .new-task {
   margin: 15px auto;
 }
-.img-add {
-  display: inline;
-  margin: 15px auto;
-  vertical-align: middle;
-  height: 50px;
-  width: 50px;
+.task-list {
+  margin: 5px auto;
+  align-items: center;
+}
+table {
+  margin: auto;
+  border-collapse: collapse;
+}
+tr {
+  font-weight: bold;
+  min-width: 200px;
+}
+td {
+  padding: 10px 10px;
+  align-items: center;
+  border: 1px solid black;
+}
+td.description {
+  width: 480px;
+}
+td.status {
+  width: 100px;
+}
+.icon {  
+  height: 38px;
+  width: 38px;
 }
 p {
   display: inline;
