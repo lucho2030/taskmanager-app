@@ -23,7 +23,7 @@
           <td class="status" v-if="task.description != ''">{{ task.status }}</td>
           
           <td v-if="task.description != ''"><button @click="startTask(index)"><img class="icon" alt="Start Task" src="./assets/start.png"></button></td>
-          <td v-if="task.description != ''"><button @click="finishTask(index)"><img class="icon" alt="Conclude" src="./assets/checked.png"></button></td>
+          <td v-if="task.description != ''"><button @click="finishTask(index)"><img class="icon" alt="Finish Task" src="./assets/checked.png"></button></td>
           <td v-if="task.description != ''"><button @click="editTask(index)"><img class="icon" alt="Edit Task" src="./assets/pencil.png"></button></td>
           <td v-if="task.description != ''"><button @click="deleteTask(index)"><img class="icon" alt="Delete Task" src="./assets/trash.png"></button></td>
           </tr>
@@ -34,8 +34,6 @@
 </template>
 
 <script>
-//import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'App',
   components: {
@@ -44,29 +42,32 @@ export default {
   data() {
     return {
       emptyTaskList: true,
-      newTask: null,
+      newTask: '',
       tasks: [
         {
           description: ""
         }
       ],
-      editedTask: null,
+      editedTaskIndex: null,
       finishedTask: false
     }
   },
   methods: {
     addTask: function () {
-      if(this.newTask !== null){  
+      if (this.newTask !== '') {
+        if(this.editedTaskIndex === null) { 
+          this.tasks.push({
+              description: this.newTask,
+              status: 'To do'
+          })
+        } else {
+          this.tasks[this.editedTaskIndex].description = this.newTask
+          this.editedTaskIndex = null
+        }
         this.emptyTaskList = false
-        this.tasks.push({
-            description: this.newTask,
-            status: 'To do'
-        })
         this.newTask = ''
-      } else {
-        this.tasks[this.index].description = this.newTask
-        this.editedtask = null
       }
+      
     },
     deleteTask: function (index) {
       this.tasks.splice(index, 1)
@@ -76,7 +77,7 @@ export default {
     },
     editTask: function (index) {
       this.newTask = this.tasks[index].description
-      this.editedtask = index
+      this.editedTaskIndex = index
     },
     startTask: function(index) {
       this.tasks[index].status = 'In progress'
